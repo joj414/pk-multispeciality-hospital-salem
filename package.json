@@ -1,0 +1,22 @@
+{
+  "name": "smartcare-flow",
+  "version": "1.0.0",
+  "private": true,
+  "description": "SmartCare Flow — Interactive 3D Digital Hospital Operations Platform",
+  "scripts": {
+    "dev": "npm --prefix backend run dev",
+    "dev:all": "concurrently \"npm --prefix backend run dev\" \"npm --prefix frontend run dev\"",
+    "build:backend": "npm --prefix backend run build",
+    "build:frontend": "npm --prefix frontend run build",
+    "test": "npm --prefix backend run test",
+    "db:push": "npm --prefix backend run prisma:push",
+    "db:seed": "npm --prefix backend run prisma:seed"
+  },
+  "workspaces": [
+    "backend",
+    "frontend"
+  ],
+  "dependencies": {
+    "@prisma/client": "^6.19.3"
+  }
+}

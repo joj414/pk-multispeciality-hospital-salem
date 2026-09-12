@@ -1,0 +1,166 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String      @id @default(uuid())
+  email        String      @unique
+  passwordHash String
+  name         String
+  role         String      // ADMIN, HOSPITAL_ADMIN, DOCTOR, NURSE, RECEPTIONIST, PATIENT
+  departmentId String?
+  department   Department? @relation(fields: [departmentId], references: [id])
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+}
+
+model Department {
+  id           String        @id @default(uuid())
+  name         String        @unique
+  code         String        @unique // EMERGENCY, ICU, GEN, CARD, NEURO, PED, ORTHO, DIAG, RECEPTION
+  floor        Int           // 1, 2, 3
+  description  String?
+  totalBeds    Int           @default(0)
+  users        User[]
+  doctors      Doctor[]
+  patients     Patient[]
+  appointments Appointment[]
+  beds         Bed[]
+  queueEntries QueueEntry[]
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+}
+
+model Doctor {
+  id           String        @id @default(uuid())
+  name         String
+  email        String        @unique
+  phone        String
+  specialty    String
+  roomNumber   String
+  isAvailable  Boolean       @default(true)
+  departmentId String
+  department   Department    @relation(fields: [departmentId], references: [id])
+  appointments Appointment[]
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+}
+
+model Patient {
+  id               String          @id // e.g. "P000001"
+  name             String
+  age              Int
+  gender           String
+  phone            String
+  email            String
+  address          String
+  bloodGroup       String
+  emergencyContact String
+  isEmergency      Boolean         @default(false)
+  departmentId     String?
+  department       Department?     @relation(fields: [departmentId], references: [id])
+  status           String          @default("REGISTERED") // REGISTERED, IN_QUEUE, CONSULTING, ADMITTED, DISCHARGED
+  appointments     Appointment[]
+  queueEntries     QueueEntry[]
+  bedAllocations   BedAllocation[]
+  beds             Bed[]
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
+}
+
+model Appointment {
+  id           String       @id @default(uuid())
+  patientId    String
+  patient      Patient      @relation(fields: [patientId], references: [id])
+  doctorId     String
+  doctor       Doctor       @relation(fields: [doctorId], references: [id])
+  departmentId String
+  department   Department   @relation(fields: [departmentId], references: [id])
+  date         String       // YYYY-MM-DD
+  time         String       // HH:mm
+  type         String       // ROUTINE, FOLLOW_UP, EMERGENCY, SPECIALIST
+  priority     Int          @default(1) // 1 (Routine) to 5 (Critical)
+  isEmergency  Boolean      @default(false)
+  reason       String
+  status       String       @default("BOOKED") // BOOKED, WAITING, CALLED, IN_PROGRESS, COMPLETED, CANCELLED, NO_SHOW
+  queueEntries QueueEntry[]
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+}
+
+model QueueEntry {
+  id               String       @id @default(uuid())
+  ticketNumber     String       // e.g. "Q-001", "EM-001"
+  patientId        String
+  patient          Patient      @relation(fields: [patientId], references: [id])
+  appointmentId    String?
+  appointment      Appointment? @relation(fields: [appointmentId], references: [id])
+  departmentId     String
+  department       Department   @relation(fields: [departmentId], references: [id])
+  priorityScore    Int          @default(1) // 1-5
+  queueType        String       @default("FIFO") // FIFO, PRIORITY
+  status           String       @default("WAITING") // WAITING, CALLED, SERVICED, CANCELLED
+  enqueuedAt       DateTime     @default(now())
+  calledAt         DateTime?
+  estimatedWaitMin Int          @default(15)
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
+}
+
+model Bed {
+  id               String          @id // "B-001" to "B-080"
+  code             String          @unique
+  departmentId     String
+  department       Department      @relation(fields: [departmentId], references: [id])
+  floor            Int             // 1, 2, 3
+  room             String
+  type             String          // ICU, EMERGENCY, GENERAL, PRIVATE, PEDIATRIC, ISOLATION
+  status           String          @default("AVAILABLE") // AVAILABLE, OCCUPIED, RESERVED, CLEANING, MAINTENANCE
+  positionX        Float
+  positionY        Float
+  positionZ        Float
+  currentPatientId String?
+  currentPatient   Patient?        @relation(fields: [currentPatientId], references: [id])
+  lastUpdated      DateTime        @default(now())
+  allocations      BedAllocation[]
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
+}
+
+model BedAllocation {
+  id          String    @id @default(uuid())
+  bedId       String
+  bed         Bed       @relation(fields: [bedId], references: [id])
+  patientId   String
+  patient     Patient   @relation(fields: [patientId], references: [id])
+  allocatedAt DateTime  @default(now())
+  releasedAt  DateTime?
+  allocatedBy String    @default("System")
+  reason      String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Notification {
+  id         String   @id @default(uuid())
+  title      String
+  message    String
+  type       String   @default("INFO") // INFO, WARNING, EMERGENCY, SUCCESS
+  targetRole String   @default("ALL")
+  isRead     Boolean  @default(false)
+  createdAt  DateTime @default(now())
+}
+
+model AuditLog {
+  id        String   @id @default(uuid())
+  action    String   // LOGIN, PATIENT_REGISTERED, APPOINTMENT_CREATED, QUEUE_UPDATED, BED_ALLOCATED, BED_RELEASED, PATIENT_DISCHARGED
+  userId    String?
+  details   String
+  ipAddress String?
+  createdAt DateTime @default(now())
+}
