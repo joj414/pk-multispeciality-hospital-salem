@@ -1,0 +1,35 @@
+name: SmartCare Flow CI/CD
+
+on:
+  push:
+    branches: [ "master", "main" ]
+  pull_request:
+    branches: [ "master", "main" ]
+
+jobs:
+  test-and-build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Use Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: "npm"
+
+      - name: Install Dependencies
+        run: |
+          npm install
+          npm --prefix backend install
+          npm --prefix frontend install
+
+      - name: Run Prisma Database Migrations & Engine Tests
+        run: |
+          npm --prefix backend run prisma:push
+          npm run test
+
+      - name: Build Next.js 3D Frontend
+        run: |
+          npm --prefix frontend run build
