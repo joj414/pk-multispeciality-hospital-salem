@@ -117,7 +117,7 @@ export const HospitalCanvas: React.FC<HospitalCanvasProps> = ({
       <div className="absolute top-4 left-4 z-10 flex flex-col gap-1.5 pointer-events-none">
         <div className="bg-slate-900/80 backdrop-blur-md px-3 py-1.5 rounded-xl border border-slate-700/80 text-xs text-slate-300 flex items-center gap-2">
           <span className="w-2 h-2 rounded-full bg-cyan-400 animate-ping" />
-          <span className="font-semibold text-white">SmartCare 3D Twin</span>
+          <span className="font-semibold text-white">PK Hospital 3D Twin</span>
           <span className="text-[10px] text-slate-400">| Left Click: Rotate • Right Click: Pan • Scroll: Zoom</span>
         </div>
       </div>

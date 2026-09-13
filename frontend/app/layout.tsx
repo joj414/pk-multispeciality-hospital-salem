@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "SmartCare Flow — 3D Digital Hospital Operations Platform",
-  description: "Intelligent Hospital Operations. Faster Decisions. Better Patient Flow. Interactive 3D WebGL Digital Twin and Priority Patient Scheduling.",
+  title: "PK Multispeciality Hospital Salem — Digital Hospital Management System",
+  description: "PK Multispeciality Hospital Salem — Advanced patient care with intelligent hospital operations, priority queue management, and real-time bed allocation.",
 };
 
 export default function RootLayout({
@@ -17,7 +17,7 @@ export default function RootLayout({
         {children}
         {/* Compliance & Educational Prototype Notice Footer */}
         <footer className="w-full py-2 bg-slate-950/90 border-t border-slate-800/80 text-center text-[10px] text-slate-500 px-4">
-          ⚠️ SmartCare Flow is an educational and operational workflow prototype. It is not a medical diagnostic or clinical decision-support system.
+          ⚠️ PK Multispeciality Hospital Salem — Digital Hospital Management System. For operational and demonstration use. Not a clinical diagnostic system.
         </footer>
       </body>
     </html>

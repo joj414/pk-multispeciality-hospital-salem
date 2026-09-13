@@ -96,21 +96,35 @@ export const Navbar: React.FC<NavbarProps> = ({
       <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
         {/* Brand */}
         <Link href="/" className="flex items-center gap-3 group">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-sky-600 to-cyan-400 p-0.5 shadow-lg shadow-sky-500/20 group-hover:scale-105 transition">
-            <div className="w-full h-full bg-slate-950 rounded-[10px] flex items-center justify-center">
-              <Activity className="w-5 h-5 text-cyan-400" />
-            </div>
+          {/* PK Hospital Logo — Hexagonal medical badge */}
+          <div className="relative w-10 h-10 flex-shrink-0">
+            <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-10 h-10 group-hover:scale-105 transition">
+              <defs>
+                <linearGradient id="pkGrad" x1="0" y1="0" x2="40" y2="40" gradientUnits="userSpaceOnUse">
+                  <stop offset="0%" stopColor="#0ea5e9" />
+                  <stop offset="100%" stopColor="#06b6d4" />
+                </linearGradient>
+              </defs>
+              {/* Hexagon shape */}
+              <polygon points="20,2 36,11 36,29 20,38 4,29 4,11" fill="url(#pkGrad)" opacity="0.15" />
+              <polygon points="20,2 36,11 36,29 20,38 4,29 4,11" fill="none" stroke="#0ea5e9" strokeWidth="1.5" />
+              {/* Medical Cross */}
+              <rect x="17.5" y="11" width="5" height="18" rx="1.5" fill="#22d3ee" opacity="0.4" />
+              <rect x="11" y="17.5" width="18" height="5" rx="1.5" fill="#22d3ee" opacity="0.4" />
+              {/* PK Text */}
+              <text x="50%" y="54%" dominantBaseline="middle" textAnchor="middle" fontFamily="Arial Black, sans-serif" fontWeight="900" fontSize="11" fill="white" letterSpacing="-0.5">PK</text>
+            </svg>
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <span className="font-extrabold text-base tracking-tight text-white group-hover:text-cyan-400 transition">
-                SMARTCARE <span className="text-cyan-400">FLOW</span>
+              <span className="font-extrabold text-sm tracking-tight text-white group-hover:text-cyan-400 transition leading-tight">
+                PK <span className="text-cyan-400">MULTISPECIALITY</span>
               </span>
               <span className="text-[9px] px-1.5 py-0.5 rounded bg-sky-500/20 text-sky-400 font-mono font-bold uppercase tracking-wider">
-                3D TWIN
+                Salem
               </span>
             </div>
-            <p className="text-[10px] text-slate-400 hidden sm:block">Intelligent Hospital Operations</p>
+            <p className="text-[10px] text-slate-400 hidden sm:block">No. 45, Sarada College Road, Salem — 636 016</p>
           </div>
         </Link>
 

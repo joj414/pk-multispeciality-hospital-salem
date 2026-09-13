@@ -50,7 +50,7 @@ export default function DashboardPage() {
   const [kpis, setKpis] = useState<HospitalKPIs | null>(null);
   const [liveAlerts, setLiveAlerts] = useState<NotificationItem[]>([]);
   const [activityStream, setActivityStream] = useState<string[]>([
-    "SmartCare Flow 3D Digital Twin synchronized.",
+    "PK Multispeciality Hospital Salem 3D Twin synchronized.",
     "Max-Heap Priority Engine online and monitoring.",
     "Real-time WebSocket connection established."
   ]);

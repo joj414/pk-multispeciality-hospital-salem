@@ -61,7 +61,7 @@ app.get("/api/dashboard", async (req, res) => {
 app.get("/health", (req, res) => {
   res.json({
     status: "HEALTHY",
-    system: "SmartCare Flow Engine",
+    system: "PK Multispeciality Hospital Salem Engine",
     version: "2.0.0",
     timestamp: new Date().toISOString()
   });
@@ -72,7 +72,7 @@ const PORT = process.env.PORT || 5000;
 server.listen(PORT, () => {
   console.log(`
   ============================================================
-  🏥 SMARTCARE FLOW — 3D DIGITAL HOSPITAL ENGINE
+  🏥 PK MULTISPECIALITY HOSPITAL SALEM — 3D DIGITAL ENGINE
   ============================================================
   🚀 REST API & WebSockets live on: http://localhost:${PORT}
   📡 Socket.IO initialized for real-time events
