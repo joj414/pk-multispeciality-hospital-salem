@@ -1,0 +1,29 @@
+services:
+  - type: web
+    name: pk-hospital-backend
+    env: node
+    rootDir: backend
+    buildCommand: npm install && npx prisma db push
+    startCommand: npm start
+    plan: free
+    envVars:
+      - key: PORT
+        value: 5000
+      - key: DATABASE_URL
+        value: file:./prisma/smartcare.db
+      - key: JWT_SECRET
+        generateValue: true
+
+  - type: web
+    name: pk-multispeciality-hospital-salem
+    env: node
+    rootDir: frontend
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    plan: free
+    envVars:
+      - key: NEXT_PUBLIC_API_URL
+        fromService:
+          type: web
+          name: pk-hospital-backend
+          property: host
