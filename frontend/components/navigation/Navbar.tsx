@@ -14,10 +14,10 @@ import {
   Bell,
   Sun,
   Moon,
-  ChevronDown,
   UserCheck,
   Flame,
-  Stethoscope
+  Compass,
+  MapPin
 } from "lucide-react";
 import { apiSearchGlobal, apiGetNotifications } from "../../lib/api";
 import { NotificationItem } from "../../types";
@@ -26,12 +26,16 @@ interface NavbarProps {
   theme?: "dark" | "light";
   onToggleTheme?: () => void;
   emergencyActive?: boolean;
+  activeTab?: string;
+  onSelectTab?: (tab: string) => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
   theme = "dark",
   onToggleTheme,
-  emergencyActive = false
+  emergencyActive = false,
+  activeTab,
+  onSelectTab
 }) => {
   const pathname = usePathname();
   const router = useRouter();
@@ -83,19 +87,33 @@ export const Navbar: React.FC<NavbarProps> = ({
   }, [searchQuery]);
 
   const navLinks = [
-    { href: "/dashboard", label: "3D Command Center", icon: Layers },
-    { href: "/queue", label: "Priority Queue", icon: Activity },
-    { href: "/beds", label: "Bed Allocation", icon: BedDouble },
-    { href: "/patients", label: "Patients", icon: Users },
-    { href: "/appointments", label: "Appointments", icon: Calendar },
-    { href: "/analytics", label: "Analytics", icon: BarChart3 }
+    { id: "overview", label: "Overview", icon: Compass },
+    { id: "command", label: "3D Command Center", icon: Layers },
+    { id: "queue", label: "Priority Queue", icon: Activity },
+    { id: "beds", label: "Bed Allocation", icon: BedDouble },
+    { id: "patients", label: "Patients", icon: Users },
+    { id: "appointments", label: "Appointments", icon: Calendar },
+    { id: "analytics", label: "Analytics", icon: BarChart3 },
+    { id: "contact", label: "Location & Contact", icon: MapPin }
   ];
 
+  const handleNavClick = (id: string, e: React.MouseEvent) => {
+    e.preventDefault();
+    if (onSelectTab) {
+      onSelectTab(id);
+    } else {
+      router.push(`/?tab=${id}`);
+    }
+  };
+
   return (
-    <header className="sticky top-0 z-40 w-full bg-slate-950/80 backdrop-blur-xl border-b border-slate-800 text-slate-200">
+    <header className="sticky top-0 z-40 w-full bg-slate-950/90 backdrop-blur-xl border-b border-slate-800 text-slate-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
         {/* Brand */}
-        <Link href="/" className="flex items-center gap-3 group">
+        <div
+          onClick={(e) => handleNavClick("overview", e)}
+          className="flex items-center gap-3 group cursor-pointer"
+        >
           {/* PK Hospital Logo — Hexagonal medical badge */}
           <div className="relative w-10 h-10 flex-shrink-0">
             <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-10 h-10 group-hover:scale-105 transition">
@@ -126,17 +144,17 @@ export const Navbar: React.FC<NavbarProps> = ({
             </div>
             <p className="text-[10px] text-slate-400 hidden sm:block">No. 45, Sarada College Road, Salem — 636 016</p>
           </div>
-        </Link>
+        </div>
 
         {/* Center Nav Links */}
-        <nav className="hidden lg:flex items-center gap-1">
+        <nav className="hidden xl:flex items-center gap-1">
           {navLinks.map((item) => {
             const Icon = item.icon;
-            const isActive = pathname === item.href;
+            const isActive = activeTab ? activeTab === item.id : false;
             return (
-              <Link
-                key={item.href}
-                href={item.href}
+              <button
+                key={item.id}
+                onClick={(e) => handleNavClick(item.id, e)}
                 className={`px-3 py-1.5 rounded-xl text-xs font-medium flex items-center gap-2 transition ${
                   isActive
                     ? "bg-sky-500/20 text-sky-400 border border-sky-500/40"
@@ -145,7 +163,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               >
                 <Icon className="w-3.5 h-3.5" />
                 {item.label}
-              </Link>
+              </button>
             );
           })}
         </nav>
@@ -170,7 +188,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 onChange={(e) => setSearchQuery(e.target.value)}
                 onFocus={() => setShowSearchDropdown(true)}
                 placeholder="Search patient, bed, doctor..."
-                className="w-40 sm:w-56 bg-slate-900/90 border border-slate-800 rounded-xl pl-9 pr-3 py-1.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-sky-500 focus:w-64 transition-all"
+                className="w-36 sm:w-48 bg-slate-900/90 border border-slate-800 rounded-xl pl-9 pr-3 py-1.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-sky-500 focus:w-56 transition-all"
               />
             </div>
 
@@ -196,7 +214,8 @@ export const Navbar: React.FC<NavbarProps> = ({
                         <div
                           key={p.id}
                           onClick={() => {
-                            router.push(`/patients`);
+                            if (onSelectTab) onSelectTab("patients");
+                            else router.push("/?tab=patients");
                             setShowSearchDropdown(false);
                           }}
                           className="p-1.5 rounded-lg hover:bg-slate-800 cursor-pointer flex justify-between"
@@ -218,7 +237,8 @@ export const Navbar: React.FC<NavbarProps> = ({
                         <div
                           key={b.id}
                           onClick={() => {
-                            router.push(`/beds`);
+                            if (onSelectTab) onSelectTab("beds");
+                            else router.push("/?tab=beds");
                             setShowSearchDropdown(false);
                           }}
                           className="p-1.5 rounded-lg hover:bg-slate-800 cursor-pointer flex justify-between"
@@ -240,7 +260,8 @@ export const Navbar: React.FC<NavbarProps> = ({
                         <div
                           key={d.id}
                           onClick={() => {
-                            router.push(`/appointments`);
+                            if (onSelectTab) onSelectTab("appointments");
+                            else router.push("/?tab=appointments");
                             setShowSearchDropdown(false);
                           }}
                           className="p-1.5 rounded-lg hover:bg-slate-800 cursor-pointer flex justify-between"
@@ -306,13 +327,17 @@ export const Navbar: React.FC<NavbarProps> = ({
           )}
 
           {/* Role Portal / Login Button */}
-          <Link
-            href="/login"
-            className="px-3 py-1.5 bg-slate-900 border border-slate-800 hover:border-slate-700 text-slate-200 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition"
+          <button
+            onClick={(e) => handleNavClick("login", e)}
+            className={`px-3 py-1.5 border rounded-xl text-xs font-semibold flex items-center gap-1.5 transition ${
+              activeTab === "login"
+                ? "bg-cyan-500/20 text-cyan-400 border-cyan-500/40"
+                : "bg-slate-900 border-slate-800 hover:border-slate-700 text-slate-200"
+            }`}
           >
             <UserCheck className="w-3.5 h-3.5 text-cyan-400" />
             <span className="hidden sm:inline">{user ? user.name.split(" ")[0] : "Demo Roles"}</span>
-          </Link>
+          </button>
         </div>
       </div>
     </header>
