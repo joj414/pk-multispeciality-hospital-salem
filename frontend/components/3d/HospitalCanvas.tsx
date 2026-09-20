@@ -10,6 +10,7 @@ import { EmergencyBeacon } from "./EmergencyBeacon";
 import { DepartmentLabels } from "./DepartmentLabels";
 import { CameraController } from "./CameraController";
 import { CameraFocusTarget } from "../../hooks/useHospitalStore";
+import { DEFAULT_HOSPITAL_BEDS } from "../../lib/defaultBeds";
 
 interface HospitalCanvasProps {
   beds: Bed[];
@@ -90,8 +91,8 @@ export const HospitalCanvas: React.FC<HospitalCanvasProps> = ({
           {/* Emergency Entrance Beacon & Alarm Strobe */}
           <EmergencyBeacon active={emergencyActive} />
 
-          {/* 3D Hospital Beds */}
-          {beds.map((bed) => {
+          {/* 3D Hospital Beds (Fallback to DEFAULT_HOSPITAL_BEDS if API is loading) */}
+          {(beds && beds.length > 0 ? beds : DEFAULT_HOSPITAL_BEDS).map((bed) => {
             // If specific floor active, hide beds from other floors
             if (activeFloor !== "ALL" && bed.floor !== activeFloor) {
               return null;

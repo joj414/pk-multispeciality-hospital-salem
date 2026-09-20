@@ -3,7 +3,16 @@
 import { useEffect, useRef, useState } from "react";
 import { io, Socket } from "socket.io-client";
 
-const SOCKET_URL = process.env.NEXT_PUBLIC_SOCKET_URL || "http://localhost:5000";
+const getSocketUrl = () => {
+  if (process.env.NEXT_PUBLIC_SOCKET_URL) return process.env.NEXT_PUBLIC_SOCKET_URL;
+  if (typeof window !== "undefined") {
+    if (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1") {
+      return "http://localhost:5000";
+    }
+    return window.location.origin;
+  }
+  return "http://localhost:5000";
+};
 
 export function useSocket() {
   const [isConnected, setIsConnected] = useState(false);
@@ -11,11 +20,18 @@ export function useSocket() {
   const socketRef = useRef<Socket | null>(null);
 
   useEffect(() => {
-    const socket = io(SOCKET_URL, {
-      transports: ["websocket", "polling"],
-      reconnectionAttempts: 10,
-      reconnectionDelay: 2000
-    });
+    let socket: Socket | null = null;
+    try {
+      socket = io(getSocketUrl(), {
+        transports: ["websocket", "polling"],
+        reconnectionAttempts: 5,
+        reconnectionDelay: 3000,
+        timeout: 5000
+      });
+    } catch (e) {
+      console.warn("Socket initialization error:", e);
+      return;
+    }
 
     socketRef.current = socket;
 

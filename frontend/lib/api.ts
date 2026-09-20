@@ -1,6 +1,6 @@
 import { Bed, BedStatus, Department, Doctor, Patient, Appointment, QueueItem, HospitalKPIs, NotificationItem, AuditLogItem } from "../types";
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || (typeof window !== "undefined" ? "" : "http://localhost:5000");
 
 async function request<T>(endpoint: string, options?: RequestInit): Promise<T> {
   const token = typeof window !== "undefined" ? localStorage.getItem("smartcare_token") : null;

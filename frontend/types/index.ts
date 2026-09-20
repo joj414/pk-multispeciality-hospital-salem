@@ -54,7 +54,7 @@ export interface Bed {
   positionZ: number;
   currentPatientId?: string | null;
   currentPatient?: Patient | null;
-  lastUpdated: string;
+  lastUpdated?: string;
 }
 
 export interface QueueItem {
@@ -87,6 +87,7 @@ export interface Appointment {
   isEmergency: boolean;
   reason: string;
   status: string;
+  createdAt?: string;
 }
 
 export interface HospitalKPIs {
